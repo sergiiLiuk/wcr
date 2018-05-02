@@ -1,7 +1,7 @@
     var express = require('express');
     var app = express();
     var server = require('http').Server(app);
-    var router = express.Router();    
+    var router = express.Router();
     var path = require('path');
     var bodyParser = require('body-parser');
     var exphbs = require('express-handlebars');
@@ -50,15 +50,12 @@
             return console.log('Error: ', err.message);
         }
     });
+    
+    serialPort.on('data', function (data) {
+        console.log(data);
+        respString = data;
+    });
 
-    if (serialPort.isOpen) {
-        console.log("s");
-        serialPort.on('data', function (data) {
-            console.log(data);
-            respString = data;
-        });
-
-    }
 
     //var routes = require('./routes/index');
     //var users = require('./routes/router');
