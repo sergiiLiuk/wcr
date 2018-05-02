@@ -1,0 +1,22 @@
+body {
+    padding: 30px;
+}
+
+button {
+    padding: 7px 15px;
+    background-color: green;
+    color: gainsboro;
+    font-size: 16px;
+    width: 300px;
+}
+
+button:hover {
+    background-color: rgb(63, 175, 63);
+}
+
+.progress {height: 80px;}
+
+.row{
+    background-color: aqua;
+}
+

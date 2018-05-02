@@ -1,0 +1,37 @@
+{
+  "name": "water_cntrl_remote",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "*",
+    "body-parser": "*",
+    "connect-flash": "*",
+    "cookie": "^0.3.1",
+    "cookie-parser": "^1.4.1",
+    "cors": "^2.8.4",
+    "express": "^4.16.3",
+    "express-handlebars": "*",
+    "express-messages": "*",
+    "express-session": "*",
+    "express-validator": "^5.1.2",
+    "flash": "^1.1.0",
+    "jsonfile": "^4.0.0",
+    "nodemon": "^1.17.3",
+    "parser": "^0.1.4",
+    "passport": "*",
+    "passport-http": "*",
+    "passport-local": "*",
+    "socket.io": "^2.1.0",
+    "socket.io-serialport": "^2.0.1"
+  },
+  "devDependencies": {
+    "gulp-nodemon": "^2.2.1",
+    "nodemon": "^1.17.3"
+  }
+}

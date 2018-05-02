@@ -1,0 +1,209 @@
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <a class="navbar-brand" href="#">Logo</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+        <ul class="navbar-nav ml-auto ">
+            <div class="navrow text-right col-lg-3">
+                <a class="nav-link" href="/irrigation">Irrigation</a>
+            </div>
+            <div class="navrow text-right col-lg-3">
+                <a class="nav-link" href="/register">Register</a>
+            </div>
+            <div class="navrow text-right col-lg-3">
+                <a class="nav-link" href="/setup">Setup</a>
+            </div>
+            <div class="navrow text-right col-lg-3">
+                <a class="nav-link" href="/logout" id="logout">Logout</a>
+                <label style="color:#ffffff;" for="water_control">Water Control</label> &nbsp;&nbsp;
+                <select id='water_control'></select>
+            </div>
+        </ul>
+    </div>
+</nav>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<div class="container">
+
+    <div class="row align-items-center justify-content-center">
+        <div class="text col-xs-10 col-md-10 text-center">
+            <label>
+                <strong> Status:</strong> {{status}} </label>
+        </div>
+    </div>
+    <br>
+    <br>
+    <br>
+    <br> {{#if ready }}
+    <div class="row justify-content-center">
+        <div class="col-xs-10 col-md-10 text-center">
+            <label class="text">
+                <strong> Status:</strong> {{status}} </label>
+            <br>
+            <label class="text">
+                <strong>Next Program:</strong> {{nextProgram}}, {{nextProgStartDay}}, {{ nextProgStartTime}} - {{nextProgEndTime}}</label>
+        </div>
+    </div>
+    <br>
+    <br>
+    <br>
+    <div class='text row justify-content-center'>
+        <label for='man_program'> Manual program </label> &nbsp; &nbsp; &nbsp;
+        <div>
+            <select id='man_prog'>
+                <option>-</option>
+            </select>
+        </div>
+    </div>
+    <br>
+    <br>
+    <br>
+    <div class='row justify-content-center'>
+        <div class="col-lg-8">
+            <button type="submit" class="btn large btn-success btn-lg btn-block" id="start_man_prog"> Start</button>
+        </div>
+    </div>
+    <br>
+    <br>
+    <hr>
+    <br>
+    <br>
+    <div class='text row justify-content-center'>
+        <label for='man_stat'> Manual station </label> &nbsp; &nbsp; &nbsp;
+        <select id="man_stat" name="man_stat">
+            <option>-</option>
+        </select> &nbsp; &nbsp; &nbsp;
+        <select id="man_stat_time" name='man_stat_time'>
+            <option>-</option>
+        </select>&nbsp;&nbsp;&nbsp;
+        <label for='man_stat_time'> min </label>
+    </div>
+    <br>
+    <br>
+    <br>
+    <div class='row justify-content-center'>
+        <div class="col-lg-8">
+            <button type="submit" class="btn large btn-success btn-lg btn-block" id="start_man_stat"> Start</button>
+        </div>
+    </div>
+    <br>
+    <br>
+    <br>
+    <br> {{/if}} {{#if manual_prog }}
+    <div class='text row'>
+        <div class='col-lg-2'>
+            <strong>
+                <span class='align-middle'>Program: {{programCurrRun}}</span>
+            </strong>
+        </div>
+        <div class='col-lg-10'>
+            <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100"
+                    style="width:{{currProgProgress}}%">
+                    {{currProgProgress}}%
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class='row'>
+        <div class='text col-start-t col-sm-6 col-md-2 text-md-left offset-md-2'>
+            <span class='align-middle'>{{currProgStartTime}}</span>
+        </div>
+        <div class='text col-end-t col-sm-6 col-md-8 text-right'>
+            <span class='align-middle'>{{currProgEndTime}}</span>
+        </div>
+    </div>
+    <br>
+    <br>
+    <br>
+    <div class='text row'>
+        <div class='col-lg-2'>
+            <strong>
+                <span class='align-middle'>Station: {{stationCurrRun}}</span>
+            </strong>
+        </div>
+        <div class='col-lg-10'>
+            <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100"
+                    style="width:{{currStationProg}}%">
+                    {{currStationProg}}%
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class='row'>
+        <div class='text col-start-t col-sm-6 col-md-2 text-md-left offset-md-2'>
+            <span class='align-middle'>{{currStationStartTime}}</span>
+        </div>
+        <div class='text col-end-t col-sm-6 col-md-8 text-right'>
+            <span class='align-middle'>{{currStationEndTime}}</span>
+        </div>
+    </div>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <div class='row justify-content-center'>
+        <div class="col-lg-8">
+            <button type="submit" class="btn large btn-danger btn-lg btn-block" id="stopIrrigation">Stop</button>
+        </div>
+    </div>
+    {{/if}} {{#if manual_station }}
+    <br>
+    <br>
+    <br>
+    <div class='text row'>
+        <div class='col-lg-2'>
+            <strong>
+                <span class='align-middle'>Station: {{stationCurrRun}}</span>
+            </strong>
+        </div>
+        <div class='col-lg-10'>
+            <div class="progress">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100"
+                    style="width:{{currStationProg}}%">
+                    {{currStationProg}}%
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class='row'>
+        <div class='text col-start-t col-sm-6 col-md-2 text-md-left offset-md-2'>
+            <span class='align-middle'>{{currStationStartTime}}</span>
+        </div>
+        <div class='text col-end-t col-sm-6 col-md-8 text-right'>
+            <span class='align-middle'>{{currStationEndTime}}</span>
+        </div>
+    </div>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <div class='row justify-content-center'>
+        <div class="col-lg-8">
+            <button type="submit" class="btn large btn-danger btn-lg btn-block" id="stopIrrigation">Stop</button>
+        </div>
+    </div>
+    {{/if}}
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+</div>

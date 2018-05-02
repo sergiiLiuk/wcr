@@ -1,0 +1,137 @@
+
+body {
+    background-color: rgb(245, 245, 245);
+}
+
+th,
+td,
+a {
+    font-size: 15px;
+}
+
+a.del {
+    color: rgb(255, 0, 0);
+    font-weight: 700;
+}
+
+a.edit,
+a.add {
+    color: rgb(3, 82, 33);
+    font-weight: 700;
+}
+
+table.table td .add {
+    display: none;
+}
+
+.large {
+    height: 100px;
+    font-size: 2em;
+    font-weight: 600;
+}
+
+.progress {
+    height: 40px;
+    background-color: rgb(155, 156, 156);
+    border-radius: 20px;
+    text-align: center;
+    line-height: 30px;
+}
+
+.progress-bar {
+    color: rgb(255, 255, 255);
+    font-size: 2em;
+    font-weight: 600;
+}
+
+.text {
+    font-size: 1.5em;
+}
+
+.nav-link {
+    font-size: 1.3em;
+}
+
+.col-start-t {
+    width: 50%;
+}
+
+.col-end-t {
+    width: 50%;
+}
+
+@media only screen and (max-width: 768px) {
+    .navrow {
+        margin: 2px;
+        background-color: rgb(93, 93, 94);
+    }
+}
+
+/*body {
+    height: 700px;
+    font-family: Arial;
+    background-color: rgb(218, 218, 218); 
+}
+
+.btn {
+    border: 2px solid rgb(0, 0, 0);
+    color: #ffffff;
+    font-weight: bold;
+    margin: 0 auto;
+    overflow: hidden;
+    padding: 10px 30px;
+    align-items: center;
+    justify-content: space-around;
+    display: flex;
+    float: none;
+}
+
+.btn.btn-size{
+    width: 100%;
+    height: 20vh;
+    font-size: 40px;
+}
+
+.btn.stop {
+    background-color: rgb(206, 67, 57);
+}
+
+.btn.start,
+.store {
+    background-color: rgb(12, 143, 44);
+}
+
+select {
+    border: 2px solid rgb(0, 0, 0);
+}
+
+#progressBar {
+   /* width: 0%;*/
+   /* height: 30px;
+    background-color: rgb(64, 110, 194);
+    border-radius: 20px;
+    text-align: center;
+    line-height: 30px;
+    color: white;
+}
+
+#bar-holder {
+    background-color: rgb(139, 139, 139);
+    border-radius: 20px;
+}
+
+input {
+    border: 2px solid #333333;
+}
+
+#navbarNavDropdown>ul>li {
+    text-align: right;
+}
+
+.col-start-t {
+    width: 50%;
+}
+
+.col-end-t {
+    width: 50%;
+}*/

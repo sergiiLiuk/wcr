@@ -1,0 +1,93 @@
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+      <a class="navbar-brand" href="#">Logo</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault"
+            aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+            <ul class="navbar-nav ml-auto ">
+                  <div class="navrow text-right col-md-3 col-lg-3">
+                        <a class="nav-link" href="/irrigation">Irrigation</a>
+                  </div>
+                  <div class="navrow text-right col-md-3 col-lg-3">
+                        <a class="nav-link" href="/register">Register</a>
+                  </div>
+                  <div class="navrow text-right col-md-3 col-lg-3">
+                        <a class="nav-link" href="/setup">Setup</a>
+                  </div>
+                  <div class="navrow text-right col-md-3 col-lg-3">
+                        <a class="nav-link" href="/logout" id="logout">Logout</a>
+                        <label style="color:#ffffff;" for="water_control">Water Control</label> &nbsp;&nbsp;
+                        <select id='water_control'></select>
+
+                  </div>
+            </ul>
+      </div>
+</nav>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<div class="container">
+
+      <div class="row justify-content-center">
+            <div class="col-xs-10 col-md-10 text-center">
+                  <label class="text">
+                        <strong> Status:</strong> {{status}} </label>
+                  <br>
+                  <label class="text">
+                        <strong>Next Program:</strong> {{nextProgram}}, {{nextProgStartDay}}, {{ nextProgStartTime}} - {{nextProgEndTime}}</label>
+            </div>
+      </div>
+      <br>
+      <br>
+      <br>
+      <div class='text row justify-content-center'>
+            <label for='man_program'> Manual program </label> &nbsp; &nbsp; &nbsp;
+            <div>
+                  <select id='man_prog'>
+                        <option>-</option>
+                  </select>
+            </div>
+      </div>
+      <br>
+      <br>
+      <br>
+      <div class='row justify-content-center'>
+            <div class="col-lg-8">
+                  <button type="submit" class="btn large btn-success btn-lg btn-block" id="start_man_prog"> Start</button>
+            </div>
+      </div>
+      <br>
+      <br>
+      <hr>
+      <br>
+      <br>
+      <div class='text row justify-content-center'>
+            <label for='man_stat'> Manual station </label> &nbsp; &nbsp; &nbsp;
+            <select id="man_stat" name="man_stat">
+                  <option>-</option>
+            </select> &nbsp; &nbsp; &nbsp;
+            <select id="man_stat_time" name='man_stat_time'>
+                  <option>-</option>
+            </select>&nbsp;&nbsp;&nbsp;
+            <label for='man_stat_time'> min </label>
+      </div>
+      <br>
+      <br>
+      <br>
+      <div class='row justify-content-center'>
+            <div class="col-lg-8">
+                  <button type="submit" class="btn large btn-success btn-lg btn-block" id="start_man_stat"> Start</button>
+            </div>
+      </div>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+</div>
