@@ -25,7 +25,6 @@
     var respString = '';
     var stat = '';
     var errorMsg = '';
-    var userLimitMsg = '';
 
     server.listen(process.env.PORT || serverName);
     console.log('Server started on port: ' + serverName);
@@ -34,7 +33,7 @@
         console.log(e);
     });
 
-    //init for SerialPort connected to Raspbery PI
+    // Init for SerialPort connected to Raspbery PI
     var serialPort = new SerialPort(portName, {
         baudrate: 9600,
         dataBits: 8,
@@ -48,12 +47,13 @@
         }
     });
 
+    // Read serial port data
     serialPort.on('data', function (data) {
         console.log(data);
         respString = data;
     });
 
-    // View Engine
+    // View engine
     app.set('views', path.join(__dirname, 'views'));
     app.engine('handlebars', exphbs({
         defaultLayout: 'layout'
@@ -68,29 +68,26 @@
         extended: false
     }));
 
-    // Set Static Folder
+    // Set static folder
     app.use(express.static(path.join(__dirname, 'public')));
 
-    // Connect Flash
-    app.use(flash());
-
-    // routing
+    // Routing
     app.use('/public/css', express.static("./public/css"));
     // app.use('/public/css/bootstrap', express.static("./public/css/bootstrap"));
     app.use('/public/img', express.static("./public/img"));
     app.use('/public/js', express.static("./public/js"));
 
-    // register the session with it*s secret ID
+    // Register the session with it*s secret ID
     app.use(session({
         secret: "secret"
     }));
 
-    // main route
+    // Main route
     app.get('/', function (req, res) {
         if (req.session.username) {
             res.redirect('/irrigation');
         } else {
-            if (connections.length == connectionsLimit) {            
+            if (connections.length == connectionsLimit) {
                 res.render('userlimitError');
             } else {
                 res.redirect('login');
@@ -98,8 +95,9 @@
         }
     });
 
+    // Login page
     app.get('/login', function (req, res) {
-        if (connections.length == connectionsLimit) {            
+        if (connections.length == connectionsLimit) {
             res.render('userlimitError');
         } else {
             res.render('login');
@@ -117,11 +115,12 @@
                 req.session.password = req.body.password;
                 res.redirect('/irrigation');
             } else {
-                console.log('no match');
+                //console.log('no match');
             }
         });
     });
 
+    // Irrigation page
     app.get('/irrigation', function (req, res) {
         if (req.session.username) {
             respString = '!WC stat00 NPA ND7 NS19:57 NE11:01 \r\n';
@@ -202,9 +201,10 @@
         }
     });
 
+    // Parse week day
     function parseWeekDay(day) {
         switch (day) {
-            case '1': // water control      
+            case '1':
                 return 'Monday';
                 break;
             case '2':
@@ -239,7 +239,7 @@
         }
     });
 
-    // Setup
+    // Setup page
     app.get('/setup', function (req, res) {
         if (req.session.username) {
             res.render('setup');
@@ -264,7 +264,7 @@
         });
     });
 
-    // Logout
+    // Logout page
     app.get('/logout', function (req, res) {
         req.session.destroy(function (err) {
             if (err) {
@@ -274,7 +274,7 @@
         });
     });
 
-    // Irrigation
+    // Irrigation page
     app.get('/irrigation', function (req, res) {
         if (req.session.username) {
             res.render('irrigation');
@@ -283,7 +283,7 @@
         }
     });
 
-    // Register
+    // Register page
     app.get('/register', function (req, res) {
         if (req.session.username) {
             var userData = User.getUserData();
@@ -292,10 +292,10 @@
             });
         } else {
             res.redirect('/');
-        }
+        }   
     });
 
-    // Register User
+    // Register new user
     app.post('/register', function (req, res) {
         var username = req.body.username;
         var password = req.body.password;
@@ -317,7 +317,7 @@
 
     //-------------------Sockets---------------------
     io.sockets.on('connection', function (socket) {
-        if (connections.length < connectionsLimit) {
+        if (errorMsg != "" && connections.length < connectionsLimit) {
             connections.push(socket);
             console.log('Connected: %s sockets connected', connections.length);
             // Disconnect
@@ -354,10 +354,6 @@
                 console.log('stop irrigation');
                 serialPort.write("@WEB STOP \r\n");
             });
-            //userLimitMsg = "";
-        } else {
-            console.log("Reached max amount of users connected..");
-            //userLimitMsg = "Reached max amount (8) of users connected! Try please later.";
         }
     });
 

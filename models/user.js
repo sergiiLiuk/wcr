@@ -15,9 +15,10 @@ module.exports.writeJSONData = function (username, password, callback) {
         spaces: 2,
         EOL: '\r\n'
     }, function (err) {
-        console.error(err)
+        console.error("write json file : " + err)
     })
 }
+
 module.exports.getUserData = function () {
     return readJSONData();
 }
@@ -25,6 +26,6 @@ module.exports.getUserData = function () {
 readJSONData = function () {
     var file = 'models/userdata/data.json';
     var obj = jsonfile.readFileSync(file);
-     //console.log(obj);
+    //console.log(obj);
     return obj;
 }
