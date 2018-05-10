@@ -125,7 +125,7 @@
     app.get('/irrigation', function (req, res) {
         if (req.session.username) {
             respString = '!WC stat00 NPA ND7 NS19:57 NE11:01 \r\n';
-            //    respString = '!WC stat02 PRA PS15:15 PE15:22 PP57 SR03 SS15:15 SE15:00 SP74 \r\n';
+            // respString = '!WC stat02 PRA PS15:15 PE15:22 PP57 SR03 SS15:15 SE15:00 SP74 \r\n';
 
             if (respString != undefined) {
                 var fields = respString.split(/ /);
