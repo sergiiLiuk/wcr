@@ -90,12 +90,20 @@
         if (req.session.username) {
             res.redirect('/irrigation');
         } else {
-            res.redirect('/login');
+            if (connections.length == connectionsLimit) {            
+                res.render('userlimitError');
+            } else {
+                res.redirect('login');
+            }
         }
     });
 
     app.get('/login', function (req, res) {
-        res.render("login");
+        if (connections.length == connectionsLimit) {            
+            res.render('userlimitError');
+        } else {
+            res.render('login');
+        }
     });
 
     app.post('/login', function (req, res) {
@@ -183,8 +191,7 @@
                 case undefined:
                     // Error
                     res.render('error', {
-                        errorMsg: errorMsg,
-                        userLimitMsg: userLimitMsg
+                        errorMsg: errorMsg
                     });
                     break;
                 default:
@@ -308,7 +315,7 @@
         }
     });
 
-    //----------------------------
+    //-------------------Sockets---------------------
     io.sockets.on('connection', function (socket) {
         if (connections.length < connectionsLimit) {
             connections.push(socket);
@@ -347,10 +354,10 @@
                 console.log('stop irrigation');
                 serialPort.write("@WEB STOP \r\n");
             });
-            userLimitMsg = "";
+            //userLimitMsg = "";
         } else {
             console.log("Reached max amount of users connected..");
-            userLimitMsg = "Reached max amount of users connected!";
+            //userLimitMsg = "Reached max amount (8) of users connected! Try please later.";
         }
     });
 
