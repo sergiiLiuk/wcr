@@ -2,7 +2,7 @@
   "name": "water_cntrl_remote",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -20,7 +20,6 @@
     "express-messages": "*",
     "express-session": "*",
     "express-validator": "^5.1.2",
-    "flash": "^1.1.0",
     "jsonfile": "^4.0.0",
     "nodemon": "^1.17.3",
     "parser": "^0.1.4",

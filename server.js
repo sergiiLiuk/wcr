@@ -1,4 +1,5 @@
     var express = require('express');
+    var session = require('express-session');
     var app = express();
     var server = require('http').Server(app);
     var router = express.Router();
@@ -7,9 +8,6 @@
     var exphbs = require('express-handlebars');
     var expressValidator = require('express-validator');
     var flash = require('connect-flash');
-    var session = require('express-session');
-    var passport = require('passport');
-    var LocalStrategy = require('passport-local').Strategy;
 
     var io = require('socket.io').listen(server);
 
@@ -19,7 +17,7 @@
     var User = require('../wcr/models/user');
 
     var serverName = 8080;
-    var portName = 'COM4';
+    var portName = 'COM3';
 
     var connections = [];
     var connectionsLimit = 8;
@@ -37,7 +35,6 @@
     });
 
     //init for SerialPort connected to Raspbery PI
-    var portName = 'COM4'
     var serialPort = new SerialPort(portName, {
         baudrate: 9600,
         dataBits: 8,
@@ -50,15 +47,11 @@
             return console.log('Error: ', err.message);
         }
     });
-    
+
     serialPort.on('data', function (data) {
         console.log(data);
         respString = data;
     });
-
-
-    //var routes = require('./routes/index');
-    //var users = require('./routes/router');
 
     // View Engine
     app.set('views', path.join(__dirname, 'views'));
@@ -68,6 +61,7 @@
 
     app.set('view engine', 'handlebars');
     app.use(expressValidator());
+
     // BodyParser Middleware
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({
@@ -77,46 +71,8 @@
     // Set Static Folder
     app.use(express.static(path.join(__dirname, 'public')));
 
-    // Express Session
-    /*  app.use(session({
-          secret: 'secret',
-          saveUninitialized: true,
-          resave: true
-      }));*/
-
-    // Passport init
-    /*  app.use(passport.initialize());
-      app.use(passport.session());*/
-
-    // Express Validator
-    /* app.use(expressValidator({
-         errorFormatter: function (param, msg, value) {
-             var namespace = param.split('.'),
-                 root = namespace.shift(),
-                 formParam = root;
-
-             while (namespace.length) {
-                 formParam += '[' + namespace.shift() + ']';
-             }
-             return {
-                 param: formParam,
-                 msg: msg,
-                 value: value
-             };
-         }
-     }));*/
-
     // Connect Flash
     app.use(flash());
-
-    // Global Vars
-    /*  app.use(function (req, res, next) {
-          res.locals.success_msg = req.flash('success_msg');
-          res.locals.error_msg = req.flash('error_msg');
-          res.locals.error = req.flash('error');
-          res.locals.user = req.user || null;
-          next();
-      });*/
 
     // routing
     app.use('/public/css', express.static("./public/css"));
@@ -124,42 +80,18 @@
     app.use('/public/img', express.static("./public/img"));
     app.use('/public/js', express.static("./public/js"));
 
-    /* app.use('/', routes);
+    // register the session with it*s secret ID
+    app.use(session({
+        secret: "secret"
+    }));
 
-     app.use('/users', users);
-
-     app.get('/login', function (req, res) {
-         res.sendFile(__dirname + "/routes/login.html");
-     });
-     app.get('/ready', function (req, res) {
-         res.sendFile(__dirname + "/routes/ready.html");
-     });
-     app.get('/irrigation', function (req, res) {
-         res.sendFile(__dirname + "/routes/irrigation.html");
-     });
-     app.get('/register', function (req, res) {
-         res.sendFile(__dirname + "/routes/register.html");
-     });
-     app.get('/setup', function (req, res) {
-         res.sendFile(__dirname + "/routes/setup.html");
-     });*/
-
-    // Get Homepage
-    /* app.get('/', ensureAuthenticated, function (req, res) {
-         res.render('irrigation');
-     });
-
-     function ensureAuthenticated(req, res, next) {
-         if (req.isAuthenticated()) {
-             return next();
-         } else {
-             //req.flash('error_msg','You are not logged in');
-             res.redirect('/login');
-         }
-     }*/
-
+    // main route
     app.get('/', function (req, res) {
-        res.redirect('/login');
+        if (req.session.username) {
+            res.redirect('/irrigation');
+        } else {
+            res.redirect('/login');
+        }
     });
 
     app.get('/login', function (req, res) {
@@ -173,107 +105,94 @@
         var userData = User.getUserData();
         userData.forEach(function (entry) {
             if (entry.username === username && entry.password === password) {
-                //res.send('hello world');
+                req.session.username = req.body.username;
+                req.session.password = req.body.password;
                 res.redirect('/irrigation');
-                //res.redirect('/root');
             } else {
                 console.log('no match');
             }
         });
-        // Validation
-        /*   req.checkBody('username', 'User Name is required').notEmpty();
-           var errors = req.validationErrors();
-           if (errors) {
-               console.log('error');
-           } else {
-               var userData = User.getUserData();
-               userData.forEach(function (entry) {
-                   if (entry.username === username && entry.password === password) {
-                       //res.send('hello world');
-                       res.redirect('/irrigation');
-                       //res.redirect('/root');
-                   } else {
-                       console.log('no match');
-                   }
-               });
-           }*/
     });
 
     app.get('/irrigation', function (req, res) {
-        respString = '!WC stat00 NPA ND7 NS19:57 NE11:01 \r\n';
-        // respString = '!WC stat02 PRA PS15:15 PE15:22 PP57 SR03 SS15:15 SE15:00 SP74 \r\n';
+        if (req.session.username) {
+            respString = '!WC stat00 NPA ND7 NS19:57 NE11:01 \r\n';
+            //    respString = '!WC stat02 PRA PS15:15 PE15:22 PP57 SR03 SS15:15 SE15:00 SP74 \r\n';
 
-        if (respString != undefined) {
-            var fields = respString.split(/ /);
-            stat = fields[1];
+            if (respString != undefined) {
+                var fields = respString.split(/ /);
+                stat = fields[1];
+            } else {
+                stat = undefined;
+            }
+
+            switch (stat) {
+                case 'stat00':
+                    // Ready            
+                    res.render('irrigation', {
+                        ready: true,
+                        manual_prog: false,
+                        manual_station: false,
+                        status: 'Program Pending',
+                        nextProgram: fields[2].substring(2),
+                        nextProgStartDay: parseWeekDay(fields[3].substring(2)),
+                        nextProgStartTime: fields[4].substring(2),
+                        nextProgEndTime: fields[5].substring(2)
+                    });
+                    break;
+
+                case 'stat01':
+                    // Automatic program running
+                    res.render('irrigation', {
+                        status: 'Not implemented'
+                    });
+                    break;
+
+                case 'stat02':
+                    // Manual program running 
+                    res.render('irrigation', {
+                        manual_prog: true,
+                        manual_station: false,
+                        ready: false,
+                        status: 'Program active',
+                        programCurrRun: fields[2].substring(2),
+                        currProgStartTime: fields[3].substring(2),
+                        currProgEndTime: fields[4].substring(2),
+                        currProgProgress: fields[5].substring(2),
+                        stationCurrRun: fields[6].substring(2),
+                        currStationStartTime: fields[7].substring(2),
+                        currStationEndTime: fields[8].substring(2),
+                        currStationProg: fields[9].substring(2)
+                    });
+                    break;
+
+                case 'stat03':
+                    // Manual station running
+                    res.render('irrigation', {
+                        ready: false,
+                        manual_prog: false,
+                        manual_station: true,
+                        status: 'Single station active',
+                        stationCurrRun: fields[6].substring(2),
+                        currStationStartTime: fields[7].substring(2),
+                        currStationEndTime: fields[8].substring(2),
+                        currStationProg: fields[9].substring(2)
+                    });
+                    break;
+
+                case undefined:
+                    // Error
+                    res.render('error', {
+                        errorMsg: errorMsg,
+                        userLimitMsg: userLimitMsg
+                    });
+                    break;
+                default:
+            }
+            respString = undefined;
         } else {
-            stat = undefined;
+            res.redirect('/');
         }
-
-        switch (stat) {
-            case 'stat00':
-                // Ready            
-                res.render('irrigation', {
-                    ready: true,
-                    manual_prog: false,
-                    manual_station: false,
-                    status: 'Program Pending',
-                    nextProgram: fields[2].substring(2),
-                    nextProgStartDay: parseWeekDay(fields[3].substring(2)),
-                    nextProgStartTime: fields[4].substring(2),
-                    nextProgEndTime: fields[5].substring(2)
-                });
-                break;
-
-            case 'stat01':
-                // Automatic program running
-                res.render('irrigation', {
-                    status: 'Not implemented'
-                });
-                break;
-
-            case 'stat02':
-                // Manual program running 
-                res.render('irrigation', {
-                    manual_prog: true,
-                    manual_station: false,
-                    ready: false,
-                    status: 'Program active',
-                    programCurrRun: fields[2].substring(2),
-                    currProgStartTime: fields[3].substring(2),
-                    currProgEndTime: fields[4].substring(2),
-                    currProgProgress: fields[5].substring(2),
-                    stationCurrRun: fields[6].substring(2),
-                    currStationStartTime: fields[7].substring(2),
-                    currStationEndTime: fields[8].substring(2),
-                    currStationProg: fields[9].substring(2)
-                });
-                break;
-
-            case 'stat03':
-                // Manual station running
-                res.render('irrigation', {
-                    ready: false,
-                    manual_prog: false,
-                    manual_station: true,
-                    status: 'Single station active',
-                    stationCurrRun: fields[6].substring(2),
-                    currStationStartTime: fields[7].substring(2),
-                    currStationEndTime: fields[8].substring(2),
-                    currStationProg: fields[9].substring(2)
-                });
-                break;
-
-            case undefined:
-                // Error
-                res.render('error', {
-                    errorMsg: errorMsg,
-                    userLimitMsg: userLimitMsg
-                });
-                break;
-            default:
-        }
-        respString = undefined;
     });
 
     function parseWeekDay(day) {
@@ -306,12 +225,20 @@
 
     // Ready page
     app.get('/ready', function (req, res) {
-        res.render('ready');
+        if (req.session.username) {
+            res.render('ready');
+        } else {
+            res.redirect('/');
+        }
     });
 
     // Setup
     app.get('/setup', function (req, res) {
-        res.render('setup');
+        if (req.session.username) {
+            res.render('setup');
+        } else {
+            res.redirect('/');
+        }
     });
 
     app.post('/setup', function (req, res) {
@@ -332,20 +259,33 @@
 
     // Logout
     app.get('/logout', function (req, res) {
-        res.render('login');
+        req.session.destroy(function (err) {
+            if (err) {
+                res.negotiate(err);
+            }
+            res.redirect('/');
+        });
     });
 
     // Irrigation
     app.get('/irrigation', function (req, res) {
-        res.render('irrigation');
+        if (req.session.username) {
+            res.render('irrigation');
+        } else {
+            res.redirect('/');
+        }
     });
 
     // Register
     app.get('/register', function (req, res) {
-        var userData = User.getUserData();
-        res.render('register', {
-            row: userData
-        });
+        if (req.session.username) {
+            var userData = User.getUserData();
+            res.render('register', {
+                row: userData
+            });
+        } else {
+            res.redirect('/');
+        }
     });
 
     // Register User
@@ -366,9 +306,7 @@
             });
             res.redirect('/register');
         }
-        //req.flash('success_msg', 'You are registered and can now login');
     });
-
 
     //----------------------------
     io.sockets.on('connection', function (socket) {
