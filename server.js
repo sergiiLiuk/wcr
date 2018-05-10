@@ -18,6 +18,7 @@
 
     var serverName = 8080;
     var portName = 'COM3';
+    //var portName = "/dev/ttyUSB0";
 
     var connections = [];
     var connectionsLimit = 8;
@@ -292,7 +293,7 @@
             });
         } else {
             res.redirect('/');
-        }   
+        }
     });
 
     // Register new user
@@ -317,7 +318,7 @@
 
     //-------------------Sockets---------------------
     io.sockets.on('connection', function (socket) {
-        if (errorMsg != "" && connections.length < connectionsLimit) {
+        if (connections.length < connectionsLimit) {
             connections.push(socket);
             console.log('Connected: %s sockets connected', connections.length);
             // Disconnect
@@ -326,34 +327,36 @@
                 console.log('Disconnected: %s sockets connected', connections.length);
             });
 
-            // Get current status
-            socket.on('status', function (data) {
-                console.log('req get staus sent');
-                serialPort.write("@WEB STAT \r\n");
-            });
+            if (errorMsg != "") {
+                // Get current status
+                socket.on('status', function (data) {
+                    console.log('req get staus sent');
+                    serialPort.write("@WEB STAT \r\n");
+                });
 
-            // Send request every x seconds
-            /* setInterval(function () {
-                 serialPort.write("@WEB STAT \r\n");
-             }, 1000);*/
+                // Send request every x seconds
+                /* setInterval(function () {
+                     serialPort.write("@WEB STAT \r\n");
+                 }, 1000);*/
 
-            // Start manual program
-            socket.on('start manual program', function (data) {
-                console.log(data);
-                serialPort.write("@WEB STRT PRG " + data.program + " \r\n");
-            });
+                // Start manual program
+                socket.on('start manual program', function (data) {
+                    console.log(data);
+                    serialPort.write("@WEB STRT PRG " + data.program + " \r\n");
+                });
 
-            // Start manual station
-            socket.on('start manual station', function (data) {
-                console.log(data);
-                serialPort.write("@WEB STRT ST" + data.station + " TIME" + data.time + " \r\n");
-            });
+                // Start manual station
+                socket.on('start manual station', function (data) {
+                    console.log(data);
+                    serialPort.write("@WEB STRT ST" + data.station + " TIME" + data.time + " \r\n");
+                });
 
-            // Stop irrigation
-            socket.on('stop irrigation', function (data) {
-                console.log('stop irrigation');
-                serialPort.write("@WEB STOP \r\n");
-            });
+                // Stop irrigation
+                socket.on('stop irrigation', function (data) {
+                    console.log('stop irrigation');
+                    serialPort.write("@WEB STOP \r\n");
+                });
+            }
         }
     });
 
