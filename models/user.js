@@ -15,7 +15,7 @@ module.exports.writeJSONData = function (username, password, callback) {
         spaces: 2,
         EOL: '\r\n'
     }, function (err) {
-        console.error("write json file : " + err)
+        //console.error("write json file : " + err)
     })
 }
 
