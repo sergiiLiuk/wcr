@@ -21,7 +21,6 @@
     "express-session": "*",
     "express-validator": "^5.1.2",
     "jsonfile": "^4.0.0",
-    "nodemon": "^1.17.3",
     "parser": "^0.1.4",
     "passport": "*",
     "passport-http": "*",
@@ -31,6 +30,6 @@
   },
   "devDependencies": {
     "gulp-nodemon": "^2.2.1",
-    "nodemon": "^1.17.3"
+    "nodemon": "^1.17.4"
   }
 }

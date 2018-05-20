@@ -3,5 +3,15 @@
     "userid": 1,
     "username": "Perrot",
     "password": "Perrot"
+  },
+  {
+    "userid": 2,
+    "username": "Sergii",
+    "password": "Liuk"
+  },
+  {
+    "userid": 3,
+    "username": "newUser",
+    "password": "xxx"
   }
 ]
