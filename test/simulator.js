@@ -8,6 +8,7 @@ var fs = require('fs');
 
 var serverName = 8000;
 var portName = 'COM3';
+var reveiceFromClient = "";
 
 //init for SerialPort connected to Arduino
 const serialPort = new SerialPort(portName, {
@@ -22,7 +23,15 @@ const serialPort = new SerialPort(portName, {
 serialPort.on("open", function () {
     console.log('open');
     serialPort.on('data', function (data) {
+        reveiceFromClient = data;
         console.log(data);
+
+        if (reveiceFromClient === reveiceFromClient) { 
+            var req_ready = '!WC stat00 NPA ND7 NS19:57 NE11:00 \r\n';
+            // var req_ready = '!WC stat02 PRA PS15:15 PE15:22 PP57 SR03 SS15:15 SE15:00 SP74 \r\n';
+     
+             serialPort.write(req_ready);
+         }
     });
 });
 
@@ -49,10 +58,12 @@ io.sockets.on('connection', function (socket) {
     });
 
     socket.on('test', function (data) {
+        console.log(data.status);
         serialPort.write(data.status);
     });
 
-    function intervalFunc(){
+
+    function intervalFunc() {
         var req_ready = '!WC stat02 PRA PS15:15 PE15:22 PP57 SR03 SS15:15 SE15:00 SP74 \r\n';
         serialPort.write(req_ready);
     }

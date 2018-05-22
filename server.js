@@ -17,7 +17,7 @@
     var User = require('../wcr/models/user');
 
     var serverName = 8080;
-    var portName = 'COM3';
+    var portName = 'COM4';
     //var portName = "/dev/ttyUSB0";
 
     var connections = [];
@@ -25,7 +25,7 @@
 
     var respString = '';
     var stat = '';
-    var errorMsg = '';
+    var loginMsg = "";
 
     server.listen(process.env.PORT || serverName);
     console.log('Server started on port: ' + serverName);
@@ -101,32 +101,40 @@
         if (connections.length == connectionsLimit) {
             res.render('userlimitError');
         } else {
-            res.render('login');
+            res.render('login', {
+                loginMsg: loginMsg
+            });
         }
     });
 
     app.post('/login', function (req, res) {
         var username = req.body.username;
         var password = req.body.password;
-
+        var isMatch = false;
         var userData = User.getUserData();
         userData.forEach(function (entry) {
             if (entry.username === username && entry.password === password) {
                 req.session.username = req.body.username;
                 req.session.password = req.body.password;
                 res.redirect('/irrigation');
-            } else {
-                //console.log('no match');
+                loginMsg = "";
+                isMatch = true;
             }
         });
+
+        if (isMatch != true) {
+            loginMsg = "Wrong Username or Password";
+            res.redirect('/login');
+        }
+
     });
 
     // Irrigation page
     app.get('/irrigation', function (req, res) {
         if (req.session.username) {
-            respString = '!WC stat00 NPA ND7 NS19:57 NE11:01 \r\n';
+            // respString = '!WC stat00 NPA ND7 NS19:57 NE11:01 \r\n';
             // respString = '!WC stat02 PRA PS15:15 PE15:22 PP57 SR03 SS15:15 SE15:00 SP74 \r\n';
-
+            console.log("resp str: " + respString);
             if (respString != undefined) {
                 var fields = respString.split(/ /);
                 stat = fields[1];
@@ -191,7 +199,7 @@
                 case undefined:
                     // Error
                     res.render('error', {
-                        errorMsg: errorMsg
+                        errorMsg: 'Check Serial Port connection and restart Server..'
                     });
                     break;
                 default:
@@ -327,36 +335,37 @@
                 console.log('Disconnected: %s sockets connected', connections.length);
             });
 
-            if (errorMsg != "") {
-                // Get current status
-                socket.on('status', function (data) {
-                    console.log('req get staus sent');
-                    serialPort.write("@WEB STAT \r\n");
-                });
+            // Get current status
+            socket.on('status', function (data) {
+                //console.log('req get staus sent');
+                serialPort.write("@WEB STAT \r\n");
+            });
 
-                // Send request every x seconds
-                /* setInterval(function () {
-                     serialPort.write("@WEB STAT \r\n");
-                 }, 1000);*/
+            //  serialPort.write("@WEB STAT \r\n");
 
-                // Start manual program
-                socket.on('start manual program', function (data) {
-                    console.log(data);
-                    serialPort.write("@WEB STRT PRG " + data.program + " \r\n");
-                });
+            // Send request every x seconds
+            setInterval(function () {
+               // console.log("status req sent");
+                serialPort.write("@WEB STAT \r\n");
+            }, 200);
 
-                // Start manual station
-                socket.on('start manual station', function (data) {
-                    console.log(data);
-                    serialPort.write("@WEB STRT ST" + data.station + " TIME" + data.time + " \r\n");
-                });
+            // Start manual program
+            socket.on('start manual program', function (data) {
+                console.log(data);
+                serialPort.write("@WEB STRT PRG " + data.program + " \r\n");
+            });
 
-                // Stop irrigation
-                socket.on('stop irrigation', function (data) {
-                    console.log('stop irrigation');
-                    serialPort.write("@WEB STOP \r\n");
-                });
-            }
+            // Start manual station
+            socket.on('start manual station', function (data) {
+                console.log(data);
+                serialPort.write("@WEB STRT ST" + data.station + " TIME" + data.time + " \r\n");
+            });
+
+            // Stop irrigation
+            socket.on('stop irrigation', function (data) {
+                console.log('stop irrigation');
+                serialPort.write("@WEB STOP \r\n");
+            });
         }
     });
 
